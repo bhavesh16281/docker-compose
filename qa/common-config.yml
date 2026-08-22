@@ -2,6 +2,20 @@ services:
   network-deploy-service:
     networks:
       - "banking-network"
+  
+  microservice-db-config:
+    extends:
+      service: network-deploy-service
+    image: "mysql:8.0"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      
   microservice-base-config:
     extends:
       service: network-deploy-service
@@ -18,3 +32,5 @@ services:
       SPRING_CONFIG_IMPORT: "optional:configserver:http://configserver:8071/"
       CONFIG_SERVER_URL: "configserver:8071"
       SPRING_PROFILES_ACTIVE: "qa"
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "root"
